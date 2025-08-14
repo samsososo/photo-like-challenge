@@ -27,4 +27,24 @@ export const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 40,
   },
+  loadingFooter: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  noMoreFooter: {
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noMoreText: {
+    fontSize: 16,
+    color: '#9ca3af',
+    fontStyle: 'italic',
+  },
 });

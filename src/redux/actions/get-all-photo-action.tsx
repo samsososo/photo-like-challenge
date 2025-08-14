@@ -11,9 +11,10 @@ export const getAllPhoto = (page: number, limit: number) => ({
   limit,
 });
 
-export const getAllPhotoSuccess = (photos: Photo[]) => ({
+export const getAllPhotoSuccess = (photos: Photo[], page: number) => ({
   type: GET_ALL_PHOTO_SUCCESS,
   photos,
+  page,
 });
 
 export const getAllPhotoFailed = () => ({

@@ -10,5 +10,8 @@ export interface CommonState {
   getAllPhotoReducers: {
     apiStatus: APIStatus;
     photos: Photo[];
+    currentPage: number;
+    hasMore: boolean;
+    isLoading: boolean;
   };
 }
