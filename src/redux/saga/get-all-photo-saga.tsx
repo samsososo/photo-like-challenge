@@ -5,12 +5,12 @@ import {
   getAllPhotoSuccess,
 } from '../actions/get-all-photo-action';
 
-export function* getAllPhotoSaga(action: any) {
+export function* getAllPhotoSaga(action: any): Generator<any, void, any> {
   try {
     const res = yield call(() => getAllPhotoService(action.page, action.limit));
 
     if (res && res.success) {
-      yield put(getAllPhotoSuccess(res.payload));
+      yield put(getAllPhotoSuccess(res.payload, action.page));
     } else {
       yield put(getAllPhotoFailed());
       //   Alert.alert(
