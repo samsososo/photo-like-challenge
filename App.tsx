@@ -8,13 +8,17 @@
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {PhotosScreen} from './src/screens/photo-screen/photos-screen';
+import {Provider} from 'react-redux';
+import store from './src/redux/store';
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <PhotosScreen />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <PhotosScreen />
+      </SafeAreaView>
+    </Provider>
   );
 }
 
