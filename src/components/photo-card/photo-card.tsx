@@ -63,19 +63,18 @@ export const PhotoCard: FunctionComponent<PhotoCardType> = ({photo}) => {
 
   const showHeartAnimation = () => {
     setShowHeart(true);
-    Animated.sequence([
-      Animated.timing(heartAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
+    Animated.timing(heartAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
       Animated.timing(heartAnim, {
         toValue: 0,
         duration: 300,
         useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setShowHeart(false);
+      }).start(() => {
+        setShowHeart(false);
+      });
     });
   };
 
