@@ -5,4 +5,5 @@ export interface Photo {
   height: number;
   url: string;
   download_url: string;
+  isLiked?: boolean;
 }

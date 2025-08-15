@@ -21,7 +21,7 @@ export const getAllPhotoService = async (page: number, limit: number) => {
     if (result) {
       return {success: true, payload: result.data};
     }
-  } catch (e) {
-    return {success: false, error: e.response.data};
+  } catch (e: any) {
+    return {success: false, error: e.response?.data || e.message};
   }
 };
