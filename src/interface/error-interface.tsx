@@ -10,6 +10,5 @@ export interface ParamError {
 }
 
 export enum ErrorCode {
-  // App Error
   UNEXPECTED_ERROR = 'unexpected_error',
 }
