@@ -2,6 +2,10 @@
 
 A React Native photo gallery app with like functionality, built with Redux Toolkit and Redux Saga.
 
+## Demo
+
+![App Demo](demo.gif)
+
 ## State Management
 
 This project uses a hybrid approach with both Redux Toolkit and Redux Saga for state management.
@@ -59,6 +63,14 @@ const MyComponent = () => {
   };
 };
 ```
+
+## Error Handling
+
+The app gracefully handles various error scenarios:
+
+![API Error](api_error.png)
+![Image Error 1](image_error1.png)
+![Image Error 2](image_error2.png)
 
 ## Project Structure
 
