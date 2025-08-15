@@ -1,44 +1,17 @@
-import {createSelector} from '@reduxjs/toolkit';
-import {RootState} from '../store';
-import {Photo} from '@/types';
+import { RootState } from '../store';
+import { Photo } from '@/types';
 
 export const selectImageState = (state: RootState) => state.image;
 
-export const selectPhotos = createSelector(
-  [selectImageState],
-  imageState => imageState.photos,
-);
+export const selectPhotos = (state: RootState) => state.image.photos;
+export const selectCurrentPage = (state: RootState) => state.image.currentPage;
+export const selectHasMore = (state: RootState) => state.image.hasMore;
+export const selectIsLoading = (state: RootState) => state.image.isLoading;
+export const selectError = (state: RootState) => state.image.error;
 
-export const selectCurrentPage = createSelector(
-  [selectImageState],
-  imageState => imageState.currentPage,
-);
+export const selectLikedPhotos = (state: RootState) => 
+  state.image.photos.filter((photo: Photo) => photo.isLiked);
 
-export const selectHasMore = createSelector(
-  [selectImageState],
-  imageState => imageState.hasMore,
-);
-
-export const selectIsLoading = createSelector(
-  [selectImageState],
-  imageState => imageState.isLoading,
-);
-
-export const selectError = createSelector(
-  [selectImageState],
-  imageState => imageState.error,
-);
-
-export const selectLikedPhotos = createSelector([selectPhotos], photos =>
-  photos.filter((photo: Photo) => photo.isLiked),
-);
-
-export const selectPhotosCount = createSelector(
-  [selectPhotos],
-  photos => photos.length,
-);
-
-export const selectLikedPhotosCount = createSelector(
-  [selectLikedPhotos],
-  likedPhotos => likedPhotos.length,
-);
+export const selectPhotosCount = (state: RootState) => state.image.photos.length;
+export const selectLikedPhotosCount = (state: RootState) => 
+  state.image.photos.filter((photo: Photo) => photo.isLiked).length;
