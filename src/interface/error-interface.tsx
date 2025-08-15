@@ -1,15 +1,16 @@
 export interface AppError {
-  code?: ErrorCode;
-  message?: string;
-  meta?: any;
+  message: string;
+  code?: string;
+  details?: any;
 }
 
-export interface ParamError {
-  param: string;
-  errorCode: string;
+export interface NetworkError extends AppError {
+  statusCode?: number;
+  url?: string;
+  method?: string;
 }
 
-export enum ErrorCode {
-  // App Error
-  UNEXPECTED_ERROR = 'unexpected_error',
+export interface ValidationError extends AppError {
+  field?: string;
+  value?: any;
 }

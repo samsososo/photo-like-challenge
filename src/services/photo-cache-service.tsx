@@ -41,13 +41,8 @@ export const togglePhotoLike = async (photoId: string, author: string): Promise<
     console.log(`Toggling like for photo ${photoId} (${author})`);
     
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
-    console.log('Current liked photos from storage:', likedPhotos);
-    
     const likedPhotoKeys: string[] = likedPhotos ? JSON.parse(likedPhotos) : [];
-    console.log('Parsed liked photo keys:', likedPhotoKeys);
-    
     const photoKey = generatePhotoKey(photoId, author);
-    console.log('Generated photo key:', photoKey);
     
     let newIsLiked: boolean;
     
@@ -64,9 +59,6 @@ export const togglePhotoLike = async (photoId: string, author: string): Promise<
     }
     
     console.log(`Photo ${photoId} (${author}) like status updated to: ${newIsLiked}`);
-    
-    const updatedLikedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
-    console.log('Updated liked photos in storage:', updatedLikedPhotos);
     
     return newIsLiked;
   } catch (error) {
@@ -120,7 +112,6 @@ export const cachePhotos = async (photos: Photo[]): Promise<void> => {
     });
 
     await AsyncStorage.setItem(STORAGE_KEYS.PHOTOS_CACHE, JSON.stringify(photosWithLikes));
-
     console.log(`Cached ${photos.length} photos, maintaining ${existingLikedPhotoInfo.length} likes`);
   } catch (error) {
     console.error('Error caching photos:', error);
@@ -139,10 +130,6 @@ export const getCachedPhotos = async (): Promise<Photo[]> => {
     return [];
   }
 };
-
-
-
-
 
 export const clearCache = async (): Promise<void> => {
   try {
