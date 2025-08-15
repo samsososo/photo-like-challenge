@@ -1,6 +1,6 @@
-import React, { FunctionComponent } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import React, {FunctionComponent} from 'react';
+import {View, Text, TouchableOpacity} from 'react-native';
+import {styles} from './styles';
 
 type PhotosHeaderProps = {
   totalPhotos: number;
@@ -24,12 +24,16 @@ export const PhotosHeader: FunctionComponent<PhotosHeaderProps> = ({
       <Text style={styles.title}>Photos</Text>
       <View style={styles.headerInfo}>
         <Text style={styles.subtitle}>Total: {totalPhotos} photos</Text>
-        <Text style={styles.storageStats}>Liked: {likedPhotos} | Cached: {cachedPhotos}</Text>
+        <Text style={styles.storageStats}>
+          Liked: {likedPhotos} | Cached: {cachedPhotos}
+        </Text>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={onDebug} style={styles.debugButton}>
             <Text style={styles.debugButtonText}>Debug</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={onClearAll} style={styles.clearCacheButton}>
+          <TouchableOpacity
+            onPress={onClearAll}
+            style={styles.clearCacheButton}>
             <Text style={styles.clearCacheButtonText}>Clear All</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
