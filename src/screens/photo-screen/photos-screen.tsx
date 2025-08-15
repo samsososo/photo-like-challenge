@@ -88,7 +88,7 @@ export const PhotosScreen: FunctionComponent = () => {
           return {...photo, isLiked};
         }),
       );
-      
+
       setSyncedPhotos(photosWithLikes);
     } catch (error) {
       setSyncedPhotos(photoList);
