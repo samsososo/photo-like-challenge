@@ -10,6 +10,7 @@ import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {PhotosScreen} from './src/screens/photo-screen/photos-screen';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
+import './src/config/reactotron';
 
 function App(): React.JSX.Element {
   return (
