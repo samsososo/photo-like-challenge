@@ -23,7 +23,7 @@ export const PhotoInfo: FunctionComponent<PhotoInfoProps> = ({
           style={[styles.likeButton, isLiked && styles.likedButton]}
           onPress={onLikePress}
         >
-          <HeartIcon size={20} filled={isLiked} />
+          <HeartIcon size={20} filled={isLiked} animated={true} />
         </TouchableOpacity>
       </View>
       <Text style={styles.dimensions}>

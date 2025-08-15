@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useImageState } from '@/redux/hooks/useImageState';
+import { PhotoCard } from '@/components/photo-card/photo-card';
 
 export const ExampleUsage: React.FC = () => {
   const { 
@@ -23,13 +24,9 @@ export const ExampleUsage: React.FC = () => {
     }
   };
 
-  const handleToggleLike = (photoId: string, author: string, currentLikeStatus: boolean) => {
-    actions.togglePhotoLike(photoId, author, !currentLikeStatus);
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Redux Toolkit Example</Text>
+    <ScrollView style={styles.container}>
+      <Text style={styles.title}>Redux Toolkit + Double Tap Demo</Text>
       
       <TouchableOpacity style={styles.button} onPress={handleFetchPhotos}>
         <Text style={styles.buttonText}>
@@ -47,6 +44,10 @@ export const ExampleUsage: React.FC = () => {
         Has More: {hasMore ? 'Yes' : 'No'}
       </Text>
 
+      <Text style={styles.instructions}>
+        💡 Double-tap on any photo to like/dislike it!
+      </Text>
+
       {photos.length > 0 && (
         <TouchableOpacity 
           style={[styles.button, !hasMore && styles.disabledButton]} 
@@ -60,28 +61,17 @@ export const ExampleUsage: React.FC = () => {
       )}
 
       <View style={styles.photoList}>
-        {photos.slice(0, 3).map((photo) => (
-          <View key={photo.id} style={styles.photoItem}>
-            <Text style={styles.photoText}>
-              {photo.author} - {photo.width}x{photo.height}
-            </Text>
-            <TouchableOpacity
-              style={[styles.likeButton, photo.isLiked && styles.likedButton]}
-              onPress={() => handleToggleLike(photo.id, photo.author, photo.isLiked || false)}
-            >
-              <Text style={styles.likeButtonText}>
-                {photo.isLiked ? '❤️' : '🤍'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        {photos.map((photo) => (
+          <PhotoCard key={photo.id} photo={photo} />
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
@@ -117,39 +107,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#666',
   },
+  instructions: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#007AFF',
+    fontWeight: '600',
+  },
   photoList: {
     marginTop: 20,
-  },
-  photoItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  photoText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  likeButton: {
-    padding: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: 'white',
-  },
-  likedButton: {
-    backgroundColor: '#ff6b6b',
-    borderColor: '#ff6b6b',
-  },
-  likeButtonText: {
-    fontSize: 16,
   },
 });

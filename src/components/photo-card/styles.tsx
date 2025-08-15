@@ -18,10 +18,20 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
+  imageContainer: {
+    position: 'relative',
+  },
   image: {
     width: cardWidth,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
+  },
+  doubleTapHeart: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{translateX: -40}, {translateY: -40}],
+    zIndex: 10,
   },
   infoContainer: {
     padding: 20,
