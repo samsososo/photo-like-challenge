@@ -1,80 +1,141 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ShoutPhotoLikeChallenge
 
-# Getting Started
+A React Native photo gallery app with like functionality, built with Redux Toolkit and Redux Saga.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## State Management
 
-## Step 1: Start the Metro Server
+This project uses a hybrid approach with both Redux Toolkit and Redux Saga for state management.
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+### Redux Toolkit Workflow (Current)
 
-To start Metro, run the following command from the _root_ of your React Native project:
+```
+Component → useImageState Hook → Redux Toolkit Slice → API Service → State Update
+```
 
+**Key Features:**
+- **Async Thunks**: `fetchAllPhotos`, `togglePhotoLike`
+- **Automatic State Management**: Loading, success, error states
+- **Modern Redux**: Immer for immutable updates, createSlice for reducers
+- **Type Safety**: Full TypeScript support
+
+**Usage Example:**
+```typescript
+import { useImageState } from '@/redux';
+
+const MyComponent = () => {
+  const { photos, isLoading, actions } = useImageState();
+  
+  const handleFetch = () => {
+    actions.fetchAllPhotos(1, 8); // page 1, 8 photos
+  };
+  
+  const handleLike = (photoId, author, currentStatus) => {
+    actions.togglePhotoLike(photoId, author, !currentStatus);
+  };
+};
+```
+
+### Redux Saga Workflow (Legacy)
+
+```
+Component → Action → Saga → API Service → Action → Reducer → State Update
+```
+
+**Key Features:**
+- **Side Effect Management**: Complex async operations
+- **Action Interception**: Watches for specific actions
+- **Error Handling**: Centralized error management
+- **Backward Compatibility**: Existing functionality preserved
+
+**Usage Example:**
+```typescript
+import { getAllPhoto } from '@/redux/actions/get-all-photo-action';
+
+const MyComponent = () => {
+  const dispatch = useDispatch();
+  
+  const handleFetch = () => {
+    dispatch(getAllPhoto(1, 8)); // Triggers saga
+  };
+};
+```
+
+## Project Structure
+
+```
+src/
+├── redux/
+│   ├── slices/          # Redux Toolkit slices
+│   ├── saga/            # Redux Saga files
+│   ├── actions/         # Action creators
+│   ├── reducers/        # Traditional reducers
+│   ├── selectors/       # State selectors
+│   └── hooks/           # Custom hooks
+├── services/            # API services
+├── components/          # UI components
+└── screens/             # App screens
+```
+
+## Getting Started
+
+### Prerequisites
+- Node.js >= 18
+- React Native CLI
+- Android Studio / Xcode
+
+### Installation
 ```bash
-# using npm
+npm install
+# or
+yarn install
+```
+
+### Running the App
+```bash
+# Start Metro bundler
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
+# Run on Android
 npm run android
 
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
+# Run on iOS
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Features
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+- **Photo Gallery**: Fetch and display photos from API
+- **Like System**: Toggle photo likes with local storage
+- **Pagination**: Infinite scroll with page-based loading
+- **Caching**: Local storage for photos and likes
+- **State Management**: Redux Toolkit + Saga hybrid approach
+- **Cross Platform**: Works on both Android and iOS
 
-## Step 3: Modifying your App
+## API
 
-Now that you have successfully run the app, let's modify it.
+- **Base URL**: `https://picsum.photos/v2`
+- **Endpoint**: `/list?page={page}&limit={limit}`
+- **Photos per page**: 8
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+## Development
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+### Adding New Features
+1. **Redux Toolkit (Recommended)**: Use `useImageState` hook and slice actions
+2. **Redux Saga**: For complex side effects or existing patterns
 
-## Congratulations! :tada:
+### State Updates
+- **Photos**: Managed by `imageSlice` with async thunks
+- **Likes**: Local storage with Redux state synchronization
+- **Pagination**: Automatic page management and infinite scroll
 
-You've successfully run and modified your React Native App. :partying_face:
+## Contributing
 
-### Now what?
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+## License
 
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-# photo-like-challenge
+This project is licensed under the MIT License.
