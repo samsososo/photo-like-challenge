@@ -8,7 +8,11 @@ export const togglePhotoLike = (photoId: string, author: string) => ({
   author,
 });
 
-export const togglePhotoLikeSuccess = (photoId: string, author: string, isLiked: boolean) => ({
+export const togglePhotoLikeSuccess = (
+  photoId: string,
+  author: string,
+  isLiked: boolean,
+) => ({
   type: TOGGLE_PHOTO_LIKE_SUCCESS,
   photoId,
   author,

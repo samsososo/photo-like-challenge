@@ -1,5 +1,8 @@
 import {call, put} from 'redux-saga/effects';
-import {getAllPhotoSuccess, getAllPhotoFailed} from '../actions/get-all-photo-action';
+import {
+  getAllPhotoSuccess,
+  getAllPhotoFailed,
+} from '../actions/get-all-photo-action';
 import {getAllPhotoService} from '@/services/common-services';
 
 export function* getAllPhotoSaga(action: any): Generator<any, void, any> {

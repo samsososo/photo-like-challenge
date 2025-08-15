@@ -10,18 +10,23 @@ export const generatePhotoKey = (photoId: string, author: string): string => {
   return `${photoId}_${author}`;
 };
 
-export const parsePhotoKey = (photoKey: string): { photoId: string; author: string } | null => {
+export const parsePhotoKey = (
+  photoKey: string,
+): {photoId: string; author: string} | null => {
   const parts = photoKey.split('_');
   if (parts.length >= 2) {
     return {
       photoId: parts[0],
-      author: parts.slice(1).join('_')
+      author: parts.slice(1).join('_'),
     };
   }
   return null;
 };
 
-export const getPhotoLikeStatus = async (photoId: string, author: string): Promise<boolean> => {
+export const getPhotoLikeStatus = async (
+  photoId: string,
+  author: string,
+): Promise<boolean> => {
   try {
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     if (likedPhotos) {
@@ -36,30 +41,41 @@ export const getPhotoLikeStatus = async (photoId: string, author: string): Promi
   }
 };
 
-export const togglePhotoLike = async (photoId: string, author: string): Promise<boolean> => {
+export const togglePhotoLike = async (
+  photoId: string,
+  author: string,
+): Promise<boolean> => {
   try {
     console.log(`Toggling like for photo ${photoId} (${author})`);
-    
+
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     const likedPhotoKeys: string[] = likedPhotos ? JSON.parse(likedPhotos) : [];
     const photoKey = generatePhotoKey(photoId, author);
-    
+
     let newIsLiked: boolean;
-    
+
     if (likedPhotoKeys.includes(photoKey)) {
       console.log('Photo is currently liked, removing like');
       const newLikedPhotoKeys = likedPhotoKeys.filter(key => key !== photoKey);
-      await AsyncStorage.setItem(STORAGE_KEYS.LIKED_PHOTOS, JSON.stringify(newLikedPhotoKeys));
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.LIKED_PHOTOS,
+        JSON.stringify(newLikedPhotoKeys),
+      );
       newIsLiked = false;
     } else {
       console.log('Photo is not liked, adding like');
       const newLikedPhotoKeys = [...likedPhotoKeys, photoKey];
-      await AsyncStorage.setItem(STORAGE_KEYS.LIKED_PHOTOS, JSON.stringify(newLikedPhotoKeys));
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.LIKED_PHOTOS,
+        JSON.stringify(newLikedPhotoKeys),
+      );
       newIsLiked = true;
     }
-    
-    console.log(`Photo ${photoId} (${author}) like status updated to: ${newIsLiked}`);
-    
+
+    console.log(
+      `Photo ${photoId} (${author}) like status updated to: ${newIsLiked}`,
+    );
+
     return newIsLiked;
   } catch (error) {
     console.error('Error toggling photo like:', error);
@@ -67,20 +83,22 @@ export const togglePhotoLike = async (photoId: string, author: string): Promise<
   }
 };
 
-export const getLikedPhotoInfo = async (): Promise<Array<{ photoId: string; author: string }>> => {
+export const getLikedPhotoInfo = async (): Promise<
+  Array<{photoId: string; author: string}>
+> => {
   try {
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     if (likedPhotos) {
       const likedPhotoKeys: string[] = JSON.parse(likedPhotos);
-      const photoInfo: Array<{ photoId: string; author: string }> = [];
-      
+      const photoInfo: Array<{photoId: string; author: string}> = [];
+
       for (const photoKey of likedPhotoKeys) {
         const parsed = parsePhotoKey(photoKey);
         if (parsed) {
           photoInfo.push(parsed);
         }
       }
-      
+
       return photoInfo;
     }
     return [];
@@ -106,13 +124,19 @@ export const cachePhotos = async (photos: Photo[]): Promise<void> => {
 
     const photosWithLikes = photos.map(photo => {
       const isLiked = existingLikedPhotoInfo.some(
-        likedInfo => likedInfo.photoId === photo.id && likedInfo.author === photo.author
+        likedInfo =>
+          likedInfo.photoId === photo.id && likedInfo.author === photo.author,
       );
-      return { ...photo, isLiked };
+      return {...photo, isLiked};
     });
 
-    await AsyncStorage.setItem(STORAGE_KEYS.PHOTOS_CACHE, JSON.stringify(photosWithLikes));
-    console.log(`Cached ${photos.length} photos, maintaining ${existingLikedPhotoInfo.length} likes`);
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.PHOTOS_CACHE,
+      JSON.stringify(photosWithLikes),
+    );
+    console.log(
+      `Cached ${photos.length} photos, maintaining ${existingLikedPhotoInfo.length} likes`,
+    );
   } catch (error) {
     console.error('Error caching photos:', error);
   }
@@ -133,9 +157,7 @@ export const getCachedPhotos = async (): Promise<Photo[]> => {
 
 export const clearCache = async (): Promise<void> => {
   try {
-    await AsyncStorage.multiRemove([
-      STORAGE_KEYS.PHOTOS_CACHE,
-    ]);
+    await AsyncStorage.multiRemove([STORAGE_KEYS.PHOTOS_CACHE]);
     console.log('Cache cleared successfully');
   } catch (error) {
     console.error('Error clearing cache:', error);
@@ -180,7 +202,7 @@ export const clearAllData = async (): Promise<void> => {
 export const debugStorage = async (): Promise<void> => {
   try {
     console.log('=== PhotoCacheService Debug Info ===');
-    
+
     const [cachedPhotos, likedPhotoInfo] = await Promise.all([
       getCachedPhotos(),
       getLikedPhotoInfo(),
@@ -188,41 +210,17 @@ export const debugStorage = async (): Promise<void> => {
 
     console.log('Cached Photos:', cachedPhotos.length);
     console.log('Liked Photos:', likedPhotoInfo);
-    
+
     const allKeys = await AsyncStorage.getAllKeys();
     console.log('All Storage Keys:', allKeys);
-    
+
     for (const key of allKeys) {
       const value = await AsyncStorage.getItem(key);
       console.log(`${key}:`, value);
     }
-    
+
     console.log('=== End Debug Info ===');
   } catch (error) {
     console.error('Error debugging storage:', error);
-  }
-};
-
-export const cleanOldStorageKeys = async (): Promise<void> => {
-  try {
-    const allKeys = await AsyncStorage.getAllKeys();
-    const oldKeys = allKeys.filter(key => 
-      key.includes('_v1') || 
-      key.includes('_v2') || 
-      key.includes('_v3') ||
-      key === 'liked_photos_v1' ||
-      key === 'liked_photos_v2' ||
-      key === 'liked_photos_v3' ||
-      key === 'photos_cache_v1' ||
-      key === 'photos_cache_v2' ||
-      key === 'photos_cache_v3'
-    );
-    
-    if (oldKeys.length > 0) {
-      await AsyncStorage.multiRemove(oldKeys);
-      console.log(`Cleaned up ${oldKeys.length} old storage keys:`, oldKeys);
-    }
-  } catch (error) {
-    console.error('Error cleaning old storage keys:', error);
   }
 };

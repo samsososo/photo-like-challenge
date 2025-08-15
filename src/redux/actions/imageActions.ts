@@ -1,5 +1,5 @@
-import { createAction } from '@reduxjs/toolkit';
-import { Photo } from '@/types';
+import {createAction} from '@reduxjs/toolkit';
+import {Photo} from '@/types';
 
 export const IMAGE_ACTIONS = {
   SET_PHOTOS_LOADING: 'image/setPhotosLoading',
@@ -17,7 +17,9 @@ export const setPhotosSuccess = createAction<{
   page: number;
 }>(IMAGE_ACTIONS.SET_PHOTOS_SUCCESS);
 
-export const setPhotosFailure = createAction<string>(IMAGE_ACTIONS.SET_PHOTOS_FAILURE);
+export const setPhotosFailure = createAction<string>(
+  IMAGE_ACTIONS.SET_PHOTOS_FAILURE,
+);
 
 export const togglePhotoLikeSuccess = createAction<{
   photoId: string;
@@ -31,10 +33,16 @@ export const resetPhotos = createAction(IMAGE_ACTIONS.RESET_PHOTOS);
 
 export const addPhoto = createAction<Photo>('image/addPhoto');
 export const removePhoto = createAction<string>('image/removePhoto');
-export const updatePhoto = createAction<Partial<Photo> & { id: string }>('image/updatePhoto');
+export const updatePhoto = createAction<Partial<Photo> & {id: string}>(
+  'image/updatePhoto',
+);
 
-export const addMultiplePhotos = createAction<Photo[]>('image/addMultiplePhotos');
-export const removeMultiplePhotos = createAction<string[]>('image/removeMultiplePhotos');
+export const addMultiplePhotos = createAction<Photo[]>(
+  'image/addMultiplePhotos',
+);
+export const removeMultiplePhotos = createAction<string[]>(
+  'image/removeMultiplePhotos',
+);
 
 export const setPhotoFilter = createAction<{
   author?: string;

@@ -1,22 +1,34 @@
-import React, {FunctionComponent, useLayoutEffect, useCallback, useEffect, useState} from 'react';
-import {View, FlatList, Text, ActivityIndicator, RefreshControl, TouchableOpacity, Alert} from 'react-native';
-import {PhotoCard} from '../../components/photo-card/photo-card';
-import {styles} from './styles';
-import {Photo} from '@/types';
-import {getAllPhoto} from '@/redux/actions/get-all-photo-action';
-import {useDispatch, useSelector} from 'react-redux';
+import {PhotosHeader} from '@/components/photos-header/photos-header';
 import {CommonState} from '@/interface/common-state-interface';
+import {getAllPhoto} from '@/redux/actions/get-all-photo-action';
 import {
-  getStorageStats,
+  cachePhotos,
+  clearAllData,
+  clearCache,
+  debugStorage,
   getCachedPhotos,
   getPhotoLikeStatus,
-  cachePhotos,
-  debugStorage,
-  clearCache,
-  clearAllData,
-  cleanOldStorageKeys
+  getStorageStats,
 } from '@/services/photo-cache-service';
-import { PhotosHeader } from '@/components/photos-header/photos-header';
+import {Photo} from '@/types';
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Animated,
+  RefreshControl,
+  Text,
+  View,
+} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {PhotoCard} from '../../components/photo-card/photo-card';
+import {styles} from './styles';
 
 export const PhotosScreen: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -31,7 +43,12 @@ export const PhotosScreen: FunctionComponent = () => {
   } | null>(null);
   const [syncedPhotos, setSyncedPhotos] = useState<Photo[]>([]);
 
-  const renderItem = ({item}: {item: Photo}) => <PhotoCard photo={item} />;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const headerOpacity = useRef(new Animated.Value(1)).current;
+
+  const renderItem = ({item, index}: {item: Photo; index: number}) => (
+    <PhotoCard photo={item} />
+  );
 
   const keyExtractor = (item: Photo) => item.id;
 
@@ -45,18 +62,38 @@ export const PhotosScreen: FunctionComponent = () => {
   const renderFooter = () => {
     if (isLoading) {
       return (
-        <View style={styles.loadingFooter}>
+        <Animated.View
+          style={[
+            styles.loadingFooter,
+            {
+              opacity: scrollY.interpolate({
+                inputRange: [0, 100],
+                outputRange: [1, 0.8],
+                extrapolate: 'clamp',
+              }),
+            },
+          ]}>
           <ActivityIndicator size="small" color="#0066cc" />
           <Text style={styles.loadingText}>Loading more photos...</Text>
-        </View>
+        </Animated.View>
       );
     }
 
     if (!hasMore && photos.length > 0) {
       return (
-        <View style={styles.noMoreFooter}>
+        <Animated.View
+          style={[
+            styles.noMoreFooter,
+            {
+              opacity: scrollY.interpolate({
+                inputRange: [0, 50],
+                outputRange: [1, 0.9],
+                extrapolate: 'clamp',
+              }),
+            },
+          ]}>
           <Text style={styles.noMoreText}>No More Photos</Text>
-        </View>
+        </Animated.View>
       );
     }
 
@@ -69,15 +106,20 @@ export const PhotosScreen: FunctionComponent = () => {
     setRefreshing(false);
   }, [dispatch]);
 
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {useNativeDriver: false},
+  );
+
   const syncPhotosWithLikes = useCallback(async (photoList: Photo[]) => {
     try {
       const photosWithLikes = await Promise.all(
-        photoList.map(async (photo) => {
+        photoList.map(async photo => {
           const isLiked = await getPhotoLikeStatus(photo.id, photo.author);
-          return { ...photo, isLiked };
-        })
+          return {...photo, isLiked};
+        }),
       );
-      
+
       setSyncedPhotos(photosWithLikes);
     } catch (error) {
       setSyncedPhotos(photoList);
@@ -95,7 +137,7 @@ export const PhotosScreen: FunctionComponent = () => {
       'Clear All Data',
       'Are you sure you want to clear all data? This will remove all cached photos and reset all like statuses.',
       [
-        { text: 'Cancel', style: 'cancel' },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Clear All',
           style: 'destructive',
@@ -117,7 +159,7 @@ export const PhotosScreen: FunctionComponent = () => {
       'Refresh Data',
       'Are you sure you want to refresh all photo data? This will fetch the latest photos from the server.',
       [
-        { text: 'Cancel', style: 'cancel' },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Refresh',
           style: 'default',
@@ -137,7 +179,6 @@ export const PhotosScreen: FunctionComponent = () => {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        await cleanOldStorageKeys();
         const stats = await getStorageStats();
         setStorageStats(stats);
         const cachedPhotos = await getCachedPhotos();
@@ -199,7 +240,7 @@ export const PhotosScreen: FunctionComponent = () => {
         onClearAll={handleClearCache}
         onRefresh={handleRefreshData}
       />
-      <FlatList
+      <Animated.FlatList
         data={displayPhotos}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -208,12 +249,16 @@ export const PhotosScreen: FunctionComponent = () => {
         onEndReached={loadMorePhotos}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             colors={['#0066cc']}
             tintColor="#0066cc"
+            progressBackgroundColor="#ffffff"
+            progressViewOffset={20}
           />
         }
       />

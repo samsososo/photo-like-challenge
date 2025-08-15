@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState, AppDispatch} from '../store';
 import {
   selectPhotos,
   selectCurrentPage,
@@ -51,25 +51,30 @@ export const useImageState = () => {
   const authorsList = useSelector(selectAuthorsList);
 
   const actions = {
-    fetchAllPhotos: (page: number, limit: number) => 
-      dispatch(fetchAllPhotos({ page, limit })),
-    togglePhotoLike: (photoId: string, author: string, isLiked: boolean) => 
-      dispatch(togglePhotoLike({ photoId, author, isLiked })),
-    
+    fetchAllPhotos: (page: number, limit: number) =>
+      dispatch(fetchAllPhotos({page, limit})),
+    togglePhotoLike: (photoId: string, author: string, isLiked: boolean) =>
+      dispatch(togglePhotoLike({photoId, author, isLiked})),
+
     setPhotosLoading: () => dispatch(setPhotosLoading()),
-    setPhotosSuccess: (payload: { photos: any[]; page: number }) => 
+    setPhotosSuccess: (payload: {photos: any[]; page: number}) =>
       dispatch(setPhotosSuccess(payload)),
     setPhotosFailure: (error: string) => dispatch(setPhotosFailure(error)),
-    togglePhotoLikeSuccess: (payload: { photoId: string; author: string; isLiked: boolean }) => 
-      dispatch(togglePhotoLikeSuccess(payload)),
-    
+    togglePhotoLikeSuccess: (payload: {
+      photoId: string;
+      author: string;
+      isLiked: boolean;
+    }) => dispatch(togglePhotoLikeSuccess(payload)),
+
     clearError: () => dispatch(clearError()),
     resetPhotos: () => dispatch(resetPhotos()),
     addPhoto: (photo: any) => dispatch(addPhoto(photo)),
     removePhoto: (photoId: string) => dispatch(removePhoto(photoId)),
-    updatePhoto: (payload: Partial<any> & { id: string }) => dispatch(updatePhoto(payload)),
+    updatePhoto: (payload: Partial<any> & {id: string}) =>
+      dispatch(updatePhoto(payload)),
     addMultiplePhotos: (photos: any[]) => dispatch(addMultiplePhotos(photos)),
-    removeMultiplePhotos: (photoIds: string[]) => dispatch(removeMultiplePhotos(photoIds)),
+    removeMultiplePhotos: (photoIds: string[]) =>
+      dispatch(removeMultiplePhotos(photoIds)),
     setPhotoFilter: (filters: {
       author?: string;
       minWidth?: number;

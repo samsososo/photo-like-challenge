@@ -17,8 +17,8 @@ export const HeartIcon: FunctionComponent<HeartIconProps> = ({
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
-  const fillColor = filled ? (color || '#dc2626') : 'none';
-  const strokeColor = filled ? 'none' : (color || '#9ca3af');
+  const fillColor = filled ? color || '#dc2626' : 'none';
+  const strokeColor = filled ? 'none' : color || '#9ca3af';
 
   useEffect(() => {
     if (animated && filled) {
@@ -63,7 +63,11 @@ export const HeartIcon: FunctionComponent<HeartIconProps> = ({
         transform: [{scale: scaleAnim}],
         opacity: opacityAnim,
       }}>
-      <AnimatedSvg width={size} height={size} viewBox="0 0 24 24" fill={fillColor}>
+      <AnimatedSvg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill={fillColor}>
         <Path
           d="M16.5 3.5c-1.74 0-3.41.81-4.5 2.09C10.91 4.31 9.24 3.5 7.5 3.5 4.42 3.5 2 5.92 2 9c0 6.08 7.55 10.54 9.34 11.57.41.23.9.23 1.31 0C14.45 19.54 22 15.08 22 9c0-3.08-2.42-5.5-5.5-5.5z"
           stroke={strokeColor}
