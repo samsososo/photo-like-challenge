@@ -1,34 +1,33 @@
-import {PhotosHeader} from '@/components/photos-header/photos-header';
-import {CommonState} from '@/interface/common-state-interface';
-import {getAllPhoto} from '@/redux/actions/get-all-photo-action';
-import {
-  cachePhotos,
-  clearAllData,
-  clearCache,
-  debugStorage,
-  getCachedPhotos,
-  getPhotoLikeStatus,
-  getStorageStats,
-} from '@/services/photo-cache-service';
-import {Photo} from '@/types';
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  RefreshControl,
-  Text,
   View,
+  FlatList,
+  Text,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 import {PhotoCard} from '../../components/photo-card/photo-card';
 import {styles} from './styles';
+import {Photo} from '@/types';
+import {getAllPhoto} from '@/redux/actions/get-all-photo-action';
+import {useDispatch, useSelector} from 'react-redux';
+import {CommonState} from '@/interface/common-state-interface';
+import {
+  getStorageStats,
+  getCachedPhotos,
+  getPhotoLikeStatus,
+  cachePhotos,
+  debugStorage,
+  clearCache,
+  clearAllData,
+} from '@/services/photo-cache-service';
+import {PhotosHeader} from '@/components/photos-header/photos-header';
 
 export const PhotosScreen: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -43,12 +42,7 @@ export const PhotosScreen: FunctionComponent = () => {
   } | null>(null);
   const [syncedPhotos, setSyncedPhotos] = useState<Photo[]>([]);
 
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const headerOpacity = useRef(new Animated.Value(1)).current;
-
-  const renderItem = ({item, index}: {item: Photo; index: number}) => (
-    <PhotoCard photo={item} />
-  );
+  const renderItem = ({item}: {item: Photo}) => <PhotoCard photo={item} />;
 
   const keyExtractor = (item: Photo) => item.id;
 
@@ -62,38 +56,18 @@ export const PhotosScreen: FunctionComponent = () => {
   const renderFooter = () => {
     if (isLoading) {
       return (
-        <Animated.View
-          style={[
-            styles.loadingFooter,
-            {
-              opacity: scrollY.interpolate({
-                inputRange: [0, 100],
-                outputRange: [1, 0.8],
-                extrapolate: 'clamp',
-              }),
-            },
-          ]}>
+        <View style={styles.loadingFooter}>
           <ActivityIndicator size="small" color="#0066cc" />
           <Text style={styles.loadingText}>Loading more photos...</Text>
-        </Animated.View>
+        </View>
       );
     }
 
     if (!hasMore && photos.length > 0) {
       return (
-        <Animated.View
-          style={[
-            styles.noMoreFooter,
-            {
-              opacity: scrollY.interpolate({
-                inputRange: [0, 50],
-                outputRange: [1, 0.9],
-                extrapolate: 'clamp',
-              }),
-            },
-          ]}>
+        <View style={styles.noMoreFooter}>
           <Text style={styles.noMoreText}>No More Photos</Text>
-        </Animated.View>
+        </View>
       );
     }
 
@@ -105,11 +79,6 @@ export const PhotosScreen: FunctionComponent = () => {
     dispatch(getAllPhoto(1, 8));
     setRefreshing(false);
   }, [dispatch]);
-
-  const handleScroll = Animated.event(
-    [{nativeEvent: {contentOffset: {y: scrollY}}}],
-    {useNativeDriver: false},
-  );
 
   const syncPhotosWithLikes = useCallback(async (photoList: Photo[]) => {
     try {
@@ -240,7 +209,7 @@ export const PhotosScreen: FunctionComponent = () => {
         onClearAll={handleClearCache}
         onRefresh={handleRefreshData}
       />
-      <Animated.FlatList
+      <FlatList
         data={displayPhotos}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -249,16 +218,12 @@ export const PhotosScreen: FunctionComponent = () => {
         onEndReached={loadMorePhotos}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             colors={['#0066cc']}
             tintColor="#0066cc"
-            progressBackgroundColor="#ffffff"
-            progressViewOffset={20}
           />
         }
       />

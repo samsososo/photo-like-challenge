@@ -20,7 +20,7 @@ export const PhotoInfo: FunctionComponent<PhotoInfoProps> = ({
   return (
     <View style={styles.infoContainer}>
       <View style={styles.authorContainer}>
-        <Text style={styles.author}>{photo.author ?? '--'}</Text>
+        <Text style={styles.author}>{photo.author}</Text>
         <Animated.View
           style={[
             likeButtonScale && {

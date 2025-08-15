@@ -46,16 +46,6 @@ interface ImageState {
   isLoading: boolean;
   apiStatus: APIStatus;
   error: string | null;
-  filters: {
-    author?: string;
-    minWidth?: number;
-    minHeight?: number;
-    likedOnly?: boolean;
-  };
-  sort: {
-    field: 'id' | 'author' | 'width' | 'height' | 'isLiked';
-    direction: 'asc' | 'desc';
-  };
 }
 
 const initialState: ImageState = {
@@ -65,63 +55,12 @@ const initialState: ImageState = {
   isLoading: false,
   apiStatus: APIStatus.NOT_STARTED,
   error: null,
-  filters: {},
-  sort: {
-    field: 'id',
-    direction: 'asc',
-  },
 };
 
 const imageSlice = createSlice({
   name: 'image',
   initialState,
   reducers: {
-    setPhotosLoading: state => {
-      state.isLoading = true;
-      state.apiStatus = APIStatus.LOADING;
-    },
-    setPhotosSuccess: (
-      state,
-      action: PayloadAction<{photos: Photo[]; page: number}>,
-    ) => {
-      const {photos, page} = action.payload;
-      const isFirstPage = page === 1;
-      const hasMore = photos.length >= 8;
-
-      if (isFirstPage) {
-        state.photos = photos;
-      } else {
-        state.photos = [...state.photos, ...photos];
-      }
-
-      state.currentPage = page;
-      state.hasMore = hasMore;
-      state.isLoading = false;
-      state.apiStatus = APIStatus.SUCCESS;
-      state.error = null;
-    },
-    setPhotosFailure: (state, action: PayloadAction<string>) => {
-      state.isLoading = false;
-      state.apiStatus = APIStatus.FAILURE;
-      state.error = action.payload;
-    },
-    togglePhotoLikeSuccess: (
-      state,
-      action: PayloadAction<{
-        photoId: string;
-        author: string;
-        isLiked: boolean;
-      }>,
-    ) => {
-      const {photoId, author, isLiked} = action.payload;
-      const photoIndex = state.photos.findIndex(
-        photo => photo.id === photoId && photo.author === author,
-      );
-
-      if (photoIndex !== -1) {
-        state.photos[photoIndex].isLiked = isLiked;
-      }
-    },
     clearError: state => {
       state.error = null;
     },
@@ -132,49 +71,6 @@ const imageSlice = createSlice({
       state.isLoading = false;
       state.apiStatus = APIStatus.NOT_STARTED;
       state.error = null;
-    },
-    addPhoto: (state, action: PayloadAction<Photo>) => {
-      state.photos.unshift(action.payload);
-    },
-    removePhoto: (state, action: PayloadAction<string>) => {
-      state.photos = state.photos.filter(photo => photo.id !== action.payload);
-    },
-    updatePhoto: (
-      state,
-      action: PayloadAction<Partial<Photo> & {id: string}>,
-    ) => {
-      const {id, ...updates} = action.payload;
-      const photoIndex = state.photos.findIndex(photo => photo.id === id);
-      if (photoIndex !== -1) {
-        state.photos[photoIndex] = {...state.photos[photoIndex], ...updates};
-      }
-    },
-    addMultiplePhotos: (state, action: PayloadAction<Photo[]>) => {
-      state.photos.push(...action.payload);
-    },
-    removeMultiplePhotos: (state, action: PayloadAction<string[]>) => {
-      const idsToRemove = new Set(action.payload);
-      state.photos = state.photos.filter(photo => !idsToRemove.has(photo.id));
-    },
-    setPhotoFilter: (
-      state,
-      action: PayloadAction<{
-        author?: string;
-        minWidth?: number;
-        minHeight?: number;
-        likedOnly?: boolean;
-      }>,
-    ) => {
-      state.filters = {...state.filters, ...action.payload};
-    },
-    sortPhotos: (
-      state,
-      action: PayloadAction<{
-        field: 'id' | 'author' | 'width' | 'height' | 'isLiked';
-        direction: 'asc' | 'desc';
-      }>,
-    ) => {
-      state.sort = action.payload;
     },
   },
   extraReducers: builder => {
@@ -206,7 +102,6 @@ const imageSlice = createSlice({
         state.apiStatus = APIStatus.FAILURE;
         state.error = (action.payload as string) || 'Failed to fetch photos';
       })
-      .addCase(togglePhotoLike.pending, state => {})
       .addCase(togglePhotoLike.fulfilled, (state, action) => {
         const {photoId, author, isLiked} = action.payload;
         const photoIndex = state.photos.findIndex(
@@ -224,20 +119,6 @@ const imageSlice = createSlice({
   },
 });
 
-export const {
-  setPhotosLoading,
-  setPhotosSuccess,
-  setPhotosFailure,
-  togglePhotoLikeSuccess,
-  clearError,
-  resetPhotos,
-  addPhoto,
-  removePhoto,
-  updatePhoto,
-  addMultiplePhotos,
-  removeMultiplePhotos,
-  setPhotoFilter,
-  sortPhotos,
-} = imageSlice.actions;
+export const {clearError, resetPhotos} = imageSlice.actions;
 
 export default imageSlice.reducer;
