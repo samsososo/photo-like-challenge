@@ -1454,6 +1454,8 @@ PODS:
     - React-logger (= 0.75.1)
     - React-perflogger (= 0.75.1)
     - React-utils (= 0.75.1)
+  - RNCAsyncStorage (2.2.0):
+    - React-Core
   - RNScreens (4.14.1):
     - DoubleConversion
     - glog
@@ -1476,6 +1478,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSVG (15.12.1):
+    - React-Core
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
 
@@ -1542,7 +1546,9 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1670,8 +1676,12 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1736,7 +1746,9 @@ SPEC CHECKSUMS:
   React-utils: 9df52a2fd3bff21dc1d5e9989500387b274eb48a
   ReactCodegen: 57df86fcb566f22498b9b26e014bda040d132672
   ReactCommon: d01a4f92f35656f0f7c87a4657cd4b1e37ab81a9
+  RNCAsyncStorage: 23e56519cc41d3bade3c8d4479f7760cb1c11996
   RNScreens: a69d8e5c25271dda0775ca0ca53f397df6bc3502
+  RNSVG: 04b49c16a517396385fef05091fe0713cf890dc7
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 3dcf70785fde807153d1dba2a7ec35102526d9bf
 

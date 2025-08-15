@@ -1,30 +1,9 @@
-import {Dimensions, StyleSheet} from 'react-native';
-
-const {width: screenWidth} = Dimensions.get('window');
-const cardWidth = screenWidth - 32;
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  image: {
-    width: cardWidth,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
   infoContainer: {
-    padding: 20,
+    padding: 16,
+    backgroundColor: '#ffffff',
   },
   authorContainer: {
     flexDirection: 'row',
@@ -49,16 +28,10 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fef2f2',
     borderColor: '#fecaca',
   },
-  likeText: {
-    fontSize: 16,
-  },
-  likedText: {
-    color: '#dc2626',
-  },
   dimensions: {
     fontSize: 14,
     color: '#6b7280',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   id: {
     fontSize: 12,

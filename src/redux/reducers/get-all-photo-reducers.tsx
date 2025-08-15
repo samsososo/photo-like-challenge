@@ -1,28 +1,18 @@
 import {AnyAction} from 'redux';
-import {APIStatus} from '../../constants/constants';
-import {
-  GET_ALL_PHOTO,
-  GET_ALL_PHOTO_SUCCESS,
-  GET_ALL_PHOTO_FAIL,
-  RESET_GET_ALL_PHOTO,
-} from '../actions/get-all-photo-action';
+import {GET_ALL_PHOTO, GET_ALL_PHOTO_SUCCESS, GET_ALL_PHOTO_FAIL} from '../actions/get-all-photo-action';
+import {TOGGLE_PHOTO_LIKE_SUCCESS} from '../actions/toggle-photo-like-action';
+import {APIStatus} from '@/constants/constants';
 import {Photo} from '@/types';
 
-const initiState: {
-  apiStatus: APIStatus;
-  photos: Photo[];
-  currentPage: number;
-  hasMore: boolean;
-  isLoading: boolean;
-} = {
+const initialState = {
   apiStatus: APIStatus.NOT_STARTED,
-  photos: [],
+  photos: [] as Photo[],
   currentPage: 1,
   hasMore: true,
   isLoading: false,
 };
 
-export const getAllPhotoReducers = (state = initiState, action: AnyAction) => {
+export const getAllPhotoReducers = (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case GET_ALL_PHOTO: {
       return {
@@ -31,19 +21,30 @@ export const getAllPhotoReducers = (state = initiState, action: AnyAction) => {
         isLoading: true,
       };
     }
+
     case GET_ALL_PHOTO_SUCCESS: {
-      const newPhotos = action.photos;
+      const newPhotos: Photo[] = action.photos;
       const isFirstPage = action.page === 1;
       const hasMore = newPhotos.length >= 8;
+
+      let updatedPhotos: Photo[];
+      if (isFirstPage) {
+        updatedPhotos = newPhotos;
+      } else {
+        const existingPhotos = state.photos;
+        updatedPhotos = [...existingPhotos, ...newPhotos];
+      }
+
       return {
         ...state,
         apiStatus: APIStatus.SUCCESS,
-        photos: isFirstPage ? newPhotos : [...state.photos, ...newPhotos],
+        photos: updatedPhotos,
         currentPage: action.page,
         hasMore,
         isLoading: false,
       };
     }
+
     case GET_ALL_PHOTO_FAIL: {
       return {
         ...state,
@@ -51,17 +52,20 @@ export const getAllPhotoReducers = (state = initiState, action: AnyAction) => {
         isLoading: false,
       };
     }
-    case RESET_GET_ALL_PHOTO: {
+
+    case TOGGLE_PHOTO_LIKE_SUCCESS: {
+      const updatedPhotos = state.photos.map(photo =>
+        photo.id === action.photoId && photo.author === action.author
+          ? { ...photo, isLiked: action.isLiked }
+          : photo
+      );
       return {
         ...state,
-        apiStatus: APIStatus.NOT_STARTED,
-        photos: [],
-        currentPage: 1,
-        hasMore: true,
-        isLoading: false,
+        photos: updatedPhotos,
       };
     }
+
     default:
-      return {...state};
+      return state;
   }
 };
