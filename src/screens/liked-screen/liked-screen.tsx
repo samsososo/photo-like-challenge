@@ -7,7 +7,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import config from '@/config/ui-config.json';
-import {getCachedPhotos, getPhotoLikeStatus} from '@/services/photo-cache-service';
+import {getLikedPhotoInfo} from '@/services/photo-cache-service';
 
 import {styles} from './styles';
 import {Photo} from '@/types';
@@ -21,18 +21,19 @@ export const LikedScreen = () => {
   const loadLikedPhotos = async () => {
     try {
       setIsLoading(true);
-      const cachedPhotos = await getCachedPhotos();
+      const likedPhotoInfo = await getLikedPhotoInfo();
       
-      const likedOnly: Photo[] = [];
-      
-      for (const photo of cachedPhotos) {
-        const isLiked = await getPhotoLikeStatus(photo.id, photo.author, photo.url, photo.width, photo.height);
-        if (isLiked) {
-          likedOnly.push({...photo, isLiked: true});
-        }
-      }
+      const likedPhotos: Photo[] = likedPhotoInfo.map(info => ({
+        id: info.photoId,
+        author: info.author,
+        width: info.width,
+        height: info.height,
+        url: info.url,
+        download_url: info.url,
+        isLiked: true,
+      }));
 
-      setLikedPhotos(likedOnly);
+      setLikedPhotos(likedPhotos);
     } catch (error) {
       console.error('Error loading liked photos:', error);
     } finally {
