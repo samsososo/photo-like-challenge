@@ -84,7 +84,7 @@ export const PhotosScreen: FunctionComponent = () => {
     try {
       const photosWithLikes = await Promise.all(
         photoList.map(async photo => {
-          const isLiked = await getPhotoLikeStatus(photo.id, photo.author);
+          const isLiked = await getPhotoLikeStatus(photo.id, photo.author, photo.url, photo.width, photo.height);
           return {...photo, isLiked};
         }),
       );

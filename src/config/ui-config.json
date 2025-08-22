@@ -1,0 +1,13 @@
+{
+    "searchBar": {
+        "enabled": true,
+        "placeholder": "Search photos",
+        "icon": "search",
+        "iconColor": "#000"
+    },
+    "likedScreen": {
+        "enabled": true,
+        "title": "Liked Photos",
+        "message": "No Liked Photos found"
+    }
+}

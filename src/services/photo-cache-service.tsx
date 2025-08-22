@@ -6,18 +6,28 @@ const STORAGE_KEYS = {
   PHOTOS_CACHE: 'photos_cache',
 };
 
-export const generatePhotoKey = (photoId: string, author: string): string => {
-  return `${photoId}_${author}`;
+export const generatePhotoKey = (photoId: string, author: string, url: string, width: number, height: number): string => {
+  return `${photoId}_${author}_${url}_${width}_${height}`;
 };
 
 export const parsePhotoKey = (
   photoKey: string,
-): {photoId: string; author: string} | null => {
+): {photoId: string; author: string; url: string; width: number; height: number;} | null => {
   const parts = photoKey.split('_');
-  if (parts.length >= 2) {
+  
+  if (parts.length >= 5) {
+    const photoId = parts[0];
+    const height = parseInt(parts[parts.length - 1]);
+    const width = parseInt(parts[parts.length - 2]);
+    const url = parts[parts.length - 3];
+    const author = parts.slice(1, parts.length - 3).join('_');
+    
     return {
-      photoId: parts[0],
-      author: parts.slice(1).join('_'),
+      photoId,
+      author,
+      url,
+      width,
+      height,
     };
   }
   return null;
@@ -26,12 +36,15 @@ export const parsePhotoKey = (
 export const getPhotoLikeStatus = async (
   photoId: string,
   author: string,
+  url: string,
+  width: number,
+  height: number,
 ): Promise<boolean> => {
   try {
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     if (likedPhotos) {
       const likedPhotoKeys: string[] = JSON.parse(likedPhotos);
-      const photoKey = generatePhotoKey(photoId, author);
+      const photoKey = generatePhotoKey(photoId, author, url, width, height);
       return likedPhotoKeys.includes(photoKey);
     }
     return false;
@@ -44,18 +57,18 @@ export const getPhotoLikeStatus = async (
 export const togglePhotoLike = async (
   photoId: string,
   author: string,
+  url: string,
+  width: number,
+  height: number,
 ): Promise<boolean> => {
   try {
-    console.log(`Toggling like for photo ${photoId} (${author})`);
-
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     const likedPhotoKeys: string[] = likedPhotos ? JSON.parse(likedPhotos) : [];
-    const photoKey = generatePhotoKey(photoId, author);
+    const photoKey = generatePhotoKey(photoId, author, url, width, height);
 
     let newIsLiked: boolean;
 
     if (likedPhotoKeys.includes(photoKey)) {
-      console.log('Photo is currently liked, removing like');
       const newLikedPhotoKeys = likedPhotoKeys.filter(key => key !== photoKey);
       await AsyncStorage.setItem(
         STORAGE_KEYS.LIKED_PHOTOS,
@@ -63,7 +76,6 @@ export const togglePhotoLike = async (
       );
       newIsLiked = false;
     } else {
-      console.log('Photo is not liked, adding like');
       const newLikedPhotoKeys = [...likedPhotoKeys, photoKey];
       await AsyncStorage.setItem(
         STORAGE_KEYS.LIKED_PHOTOS,
@@ -71,10 +83,6 @@ export const togglePhotoLike = async (
       );
       newIsLiked = true;
     }
-
-    console.log(
-      `Photo ${photoId} (${author}) like status updated to: ${newIsLiked}`,
-    );
 
     return newIsLiked;
   } catch (error) {
@@ -84,20 +92,20 @@ export const togglePhotoLike = async (
 };
 
 export const getLikedPhotoInfo = async (): Promise<
-  Array<{photoId: string; author: string}>
+  Array<{photoId: string; author: string; url: string; width: number; height: number;}>
 > => {
   try {
     const likedPhotos = await AsyncStorage.getItem(STORAGE_KEYS.LIKED_PHOTOS);
     if (likedPhotos) {
       const likedPhotoKeys: string[] = JSON.parse(likedPhotos);
-      const photoInfo: Array<{photoId: string; author: string}> = [];
+      const photoInfo: Array<{photoId: string; author: string; url: string; width: number; height: number;}> = [];
 
-      for (const photoKey of likedPhotoKeys) {
-        const parsed = parsePhotoKey(photoKey);
-        if (parsed) {
-          photoInfo.push(parsed);
+              for (const photoKey of likedPhotoKeys) {
+          const parsed = parsePhotoKey(photoKey);
+          if (parsed) {
+            photoInfo.push(parsed);
+          }
         }
-      }
 
       return photoInfo;
     }
@@ -134,9 +142,6 @@ export const cachePhotos = async (photos: Photo[]): Promise<void> => {
       STORAGE_KEYS.PHOTOS_CACHE,
       JSON.stringify(photosWithLikes),
     );
-    console.log(
-      `Cached ${photos.length} photos, maintaining ${existingLikedPhotoInfo.length} likes`,
-    );
   } catch (error) {
     console.error('Error caching photos:', error);
   }
@@ -158,7 +163,6 @@ export const getCachedPhotos = async (): Promise<Photo[]> => {
 export const clearCache = async (): Promise<void> => {
   try {
     await AsyncStorage.multiRemove([STORAGE_KEYS.PHOTOS_CACHE]);
-    console.log('Cache cleared successfully');
   } catch (error) {
     console.error('Error clearing cache:', error);
   }
@@ -193,7 +197,6 @@ export const clearAllData = async (): Promise<void> => {
       STORAGE_KEYS.LIKED_PHOTOS,
       STORAGE_KEYS.PHOTOS_CACHE,
     ]);
-    console.log('All data cleared successfully');
   } catch (error) {
     console.error('Error clearing all data:', error);
   }
@@ -201,25 +204,17 @@ export const clearAllData = async (): Promise<void> => {
 
 export const debugStorage = async (): Promise<void> => {
   try {
-    console.log('=== PhotoCacheService Debug Info ===');
-
     const [cachedPhotos, likedPhotoInfo] = await Promise.all([
       getCachedPhotos(),
       getLikedPhotoInfo(),
     ]);
 
-    console.log('Cached Photos:', cachedPhotos.length);
-    console.log('Liked Photos:', likedPhotoInfo);
-
     const allKeys = await AsyncStorage.getAllKeys();
-    console.log('All Storage Keys:', allKeys);
 
-    for (const key of allKeys) {
-      const value = await AsyncStorage.getItem(key);
-      console.log(`${key}:`, value);
-    }
-
-    console.log('=== End Debug Info ===');
+    console.log('Storage Keys Count:', allKeys.length);
+    console.log('Storage Keys:', allKeys);
+    console.log('Cached Photos:', cachedPhotos);
+    console.log('Liked Photos:', likedPhotoInfo);
   } catch (error) {
     console.error('Error debugging storage:', error);
   }

@@ -40,6 +40,9 @@ export const PhotoCard: FunctionComponent<PhotoCardType> = ({photo}) => {
         const currentLikeStatus = await getPhotoLikeStatus(
           photo.id,
           photo.author,
+          photo.url,
+          photo.width,
+          photo.height,
         );
         setIsLiked(currentLikeStatus);
       } catch (error) {
@@ -93,7 +96,7 @@ export const PhotoCard: FunctionComponent<PhotoCardType> = ({photo}) => {
       });
 
       setIsLiked(!isLiked);
-      dispatch(togglePhotoLike(photo.id, photo.author));
+      dispatch(togglePhotoLike(photo.id, photo.author, photo));
     } catch (error) {
       console.error('Error toggling like:', error);
       setIsLiked(photo.isLiked || false);
