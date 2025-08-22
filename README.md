@@ -6,6 +6,8 @@ A React Native photo gallery app with like functionality, built with Redux Toolk
 
 ![App Demo](demo.gif)
 
+![Like Shake](like_shake.gif)
+
 ## State Management
 
 This project uses a hybrid approach with both Redux Toolkit and Redux Saga for state management.

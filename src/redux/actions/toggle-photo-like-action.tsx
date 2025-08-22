@@ -2,10 +2,11 @@ export const TOGGLE_PHOTO_LIKE = 'TOGGLE_PHOTO_LIKE';
 export const TOGGLE_PHOTO_LIKE_SUCCESS = 'TOGGLE_PHOTO_LIKE_SUCCESS';
 export const TOGGLE_PHOTO_LIKE_FAIL = 'TOGGLE_PHOTO_LIKE_FAIL';
 
-export const togglePhotoLike = (photoId: string, author: string) => ({
+export const togglePhotoLike = (photoId: string, author: string, photoData?: any) => ({
   type: TOGGLE_PHOTO_LIKE,
   photoId,
   author,
+  photoData,
 });
 
 export const togglePhotoLikeSuccess = (

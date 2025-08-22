@@ -20,12 +20,18 @@ export const togglePhotoLike = createAsyncThunk(
     photoId,
     author,
     isLiked,
+    photoData,
   }: {
     photoId: string;
     author: string;
     isLiked: boolean;
+    photoData?: Photo;
   }) => {
-    const newIsLiked = await togglePhotoLikeService(photoId, author);
+    const url = photoData?.url || '';
+    const width = photoData?.width || 0;
+    const height = photoData?.height || 0;
+    
+    const newIsLiked = await togglePhotoLikeService(photoId, author, url, width, height);
     return {photoId, author, isLiked: newIsLiked};
   },
 );

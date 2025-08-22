@@ -1,26 +1,16 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
-import {PhotosScreen} from './src/screens/photo-screen/photos-screen';
 import {Provider} from 'react-redux';
 import store from './src/redux/store';
 import './src/config/reactotron';
 
+import {TabNavigation} from './src/components/tab-navigation/tab-navigation';
+
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        <PhotosScreen />
-      </SafeAreaView>
+      <TabNavigation />
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-});
 
 export default App;
